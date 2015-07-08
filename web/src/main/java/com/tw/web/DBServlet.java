@@ -44,7 +44,7 @@ public class DBServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         req.setCharacterEncoding("utf-8");
-        resp.setContentType("text/html;charset=utf-8");
+        resp.setContentType("text/json;charset=utf-8");
         PrintWriter out = resp.getWriter();
 
         String op = req.getParameter("operation");
@@ -67,7 +67,23 @@ public class DBServlet extends HttpServlet {
             }
 
             if(sql.length() > 0) {
-                out.print(stmt.execute(sql));
+                stmt.execute(sql);
+                
+                ResultSet rst = stmt.executeQuery("select * from users where name='" + username + "'");
+
+                rst.last();
+
+                out.print("{");
+                out.print("\"id\":\"" + rst.getString("id") + "\",");
+                out.print("\"username\":\"" + rst.getString("name") + "\",");
+                if (rst.getInt("gender") == 1)
+                    out.print("\"gender\":\"男\",");
+                else
+                    out.print("\"gender\":\"女\",");
+                out.print("\"email\":\"" + rst.getString("email") + "\",");
+                out.print("\"age\":\"" + rst.getString("age") + "\"");
+                out.print("}");
+                rst.close();
             }
             stmt.close();
             con.close();

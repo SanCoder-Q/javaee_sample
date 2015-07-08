@@ -33,6 +33,13 @@
 
             $.post("/web/user", data, function(resp){
                 console.log(resp);
+                var user = resp;
+                $("#user-table").append("<tr><span style='display:none;'>" + user.id + "</span>" +
+                "<td>" + user.username + "</td>" +
+                "<td>" + user.gender + "</td>" +
+                "<td>" + user.email + "</td>" +
+                "<td>" + user.age + "</td>" +
+                "</tr>");
             });
 
 
