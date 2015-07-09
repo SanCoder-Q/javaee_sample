@@ -2,13 +2,17 @@ package com.tw.web;
 
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import javax.servlet.*;
-
 import javax.servlet.http.*;
+
+import com.tw.core.*;
 
 public class DBServlet extends HttpServlet {
 
     String username, password, url, driver;
+
+    DaoFactory daoFactory;
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         req.setCharacterEncoding("utf-8");
@@ -16,29 +20,12 @@ public class DBServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
         try {
-            Connection con = getConnection();
-            Statement stmt = con.createStatement();
-            ResultSet rst = stmt.executeQuery("select * from users");
-            out.print("[");
-            while (rst.next()) {
-                out.print("{");
-                out.print("\"id\":\"" + rst.getString("id") + "\",");
-                out.print("\"username\":\"" + rst.getString("name") + "\",");
-                if (rst.getInt("gender") == 1)
-                    out.print("\"gender\":\"男\",");
-                else
-                    out.print("\"gender\":\"女\",");
-                out.print("\"email\":\"" + rst.getString("email") + "\",");
-                out.print("\"age\":\"" + rst.getString("age") + "\"");
-                out.print("},");
-            }
-            out.print("{}]");
+            UserDao userDao = daoFactory.userDao();
+            List<User> userList = userDao.getAllUsers();
+            out.print(user2JSON(userList));
             out.close();
-            rst.close();
-            stmt.close();
-            con.close();
-
-        } catch (SQLException e) {
+            userDao.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -48,101 +35,91 @@ public class DBServlet extends HttpServlet {
         resp.setContentType("text/json;charset=utf-8");
         PrintWriter out = resp.getWriter();
 
-        String op = req.getParameter("operation");
-        String username = req.getParameter("username");
-        String email = req.getParameter("email");
-        String id = req.getParameter("id");
-        String age = req.getParameter("age");
-        String gender = req.getParameter("gender");
-
-        try {
-            Connection con = getConnection();
-            Statement stmt = con.createStatement();
-            String sql = "";
-            if (op.equals("add")) {
-                System.out.println(username);
-                sql = "INSERT INTO users (name, gender, email, age) VALUES ('" + username + "', '" + gender + "', '" + email + "', '" + age + "')";
-                stmt.execute(sql);
-
-                ResultSet rst = stmt.executeQuery("select * from users where name='" + username + "'");
-
-                rst.last();
-
-                out.print("{");
-                out.print("\"id\":\"" + rst.getString("id") + "\",");
-                out.print("\"username\":\"" + rst.getString("name") + "\",");
-                if (rst.getInt("gender") == 1) {
-                    out.print("\"gender\":\"男\",");
-                }
-                else {
-                    out.print("\"gender\":\"女\",");
-                }
-                out.print("\"email\":\"" + rst.getString("email") + "\",");
-                out.print("\"age\":\"" + rst.getString("age") + "\"");
-                out.print("}");
-                rst.close();
-
-            } else if (op.equals("delete")) {
-                System.out.println(username);
-                sql = "DELETE FROM users WHERE id='" + id + "'";
-                out.print(stmt.execute(sql));
-
-            } else if (op.equals("edit")) {
-                System.out.println(username);
-                sql = "UPDATE users SET name='" + username + "', gender='" + gender + "', email='" + email + "', age='" + age + "' WHERE id='" + id + "'";
-                stmt.execute(sql);
-                ResultSet rst = stmt.executeQuery("select * from users where id='" + id + "'");
-
-                rst.last();
-
-                out.print("{");
-                out.print("\"id\":\"" + rst.getString("id") + "\",");
-                out.print("\"username\":\"" + rst.getString("name") + "\",");
-                if (rst.getInt("gender") == 1) {
-                    out.print("\"gender\":\"男\",");
-                }
-                else {
-                    out.print("\"gender\":\"女\",");
-                }
-                out.print("\"email\":\"" + rst.getString("email") + "\",");
-                out.print("\"age\":\"" + rst.getString("age") + "\"");
-                out.print("}");
-                rst.close();
-            } else {
-
-
-            }
-            out.close();
-            stmt.close();
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
+        int userId;
+        try{
+            userId = Integer.parseInt(req.getParameter("id"));
+        }
+        catch(Exception e){
+            userId = -1;
         }
 
+        User user = new User(userId,
+                req.getParameter("username"),
+                req.getParameter("gender"),
+                req.getParameter("email"),
+                Integer.parseInt(req.getParameter("age")));
+        String op = req.getParameter("operation");
 
-    }
-
-
-    public void init() throws ServletException {
-        username = "root";
-        password = "";
-        url = "jdbc:mysql://127.0.0.1:3306/test?characterEncoding=utf8";
-        driver = "com.mysql.jdbc.Driver";
-    }
-
-    private Connection getConnection() {
-        Connection con = null;
         try {
-            Class.forName(driver);
-            con = DriverManager.getConnection(url, username, password);
+            UserDao userDao = daoFactory.userDao();
+
+            if (op.equals("add")) {
+                System.out.println("Add " + user.getName());
+
+                User newUser = userDao.addUser(user);
+                out.print(user2JSON(newUser));
+
+                out.close();
+                userDao.close();
+
+            } else if (op.equals("delete")) {
+                System.out.println("Delete " + user.getName());
+                userDao.deleteUser(user);
+                out.print("true");
+                out.close();
+                userDao.close();
+            } else if (op.equals("edit")) {
+                System.out.println("Edit " + user.getName());
+
+                User newUser = userDao.editUser(user);
+                out.print(user2JSON(newUser));
+
+                out.close();
+                userDao.close();
+
+            } else {
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+    }
 
-        return con;
+    public void init(){
+        daoFactory = new DaoFactory();
+    }
 
+    private String user2JSON(List<User> userList) {
+        String json = "";
+        json += ("[");
+        for (User user : userList) {
+            json += "{";
+            json += "\"id\":\"" + user.getId() + "\",";
+            json += "\"username\":\"" + user.getName() + "\",";
+            json += "\"gender\":\"" + user.getGender() + "\",";
+            json += "\"email\":\"" + user.getEmail() + "\",";
+            json += "\"age\":\"" + user.getAge() + "\"";
+            json += "},";
+        }
+        if (json.length() > 2) {
+            json = json.substring(0, json.length() - 1);
+        }
+        json += "]";
+        return json;
+    }
+
+    private String user2JSON(User user) {
+        String json = "";
+        json += "{";
+        json += "\"id\":\"" + user.getId() + "\",";
+        json += "\"username\":\"" + user.getName() + "\",";
+        json += "\"gender\":\"" + user.getGender() + "\",";
+        json += "\"email\":\"" + user.getEmail() + "\",";
+        json += "\"age\":\"" + user.getAge() + "\"";
+        json += "}";
+        return json;
     }
 }
 

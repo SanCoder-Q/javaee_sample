@@ -41,7 +41,7 @@
                     "operation": "edit",
                     "id": user_info.id,
                     "username": user_row.find("input")[0].value,
-                    "gender": user_row.find("input")[1].value == "男" ? 1 : 0,
+                    "gender": user_row.find("input")[1].value,
                     "email": user_row.find("input")[2].value,
                     "age": user_row.find("input")[3].value
                 };
@@ -76,12 +76,12 @@
             var data = {
                 "operation": "delete",
                 "id": user_info.id,
-                "username": user_row.find("td").text(),
-                "gender": user_row.find("td").text() == "男" ? 1 : 0,
-                "email": user_row.find("td").text(),
-                "age": user_row.find("td").text()
+                "username": user_info.username,
+                "gender": user_info.gender,
+                "email": user_info.email,
+                "age": user_info.age
             };
-            console.log(JSON.stringify(user_info));
+            console.log(JSON.stringify(data));
             //发送请求
             $.post("/web/user", data, function (resp) {
                 console.log(resp);
@@ -113,7 +113,7 @@
             var data = {
                 "operation": "add",
                 "username": $("#input-tr-add").find("input")[0].value,
-                "gender": $("#input-tr-add").find("input")[1].value == "男" ? 1 : 0,
+                "gender": $("#input-tr-add").find("input")[1].value,
                 "email": $("#input-tr-add").find("input")[2].value,
                 "age": $("#input-tr-add").find("input")[3].value
             };
