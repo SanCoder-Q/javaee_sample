@@ -25,7 +25,7 @@ public class UserDao {
 
     public User addUser(User user) throws ClassNotFoundException, SQLException{
         Statement stmt = conn.createStatement();
-        String sql = "INSERT INTO users (name, gender, email, age) VALUES ('" + user.getName() + "', '" + user.getGenderNum() + "', '" + user.getEmail() + "', '" + user.getAge() + "')";
+        String sql = "INSERT INTO users (name, gender, email, age) VALUES ('" + user.getName() + "', '" + user.getGender() + "', '" + user.getEmail() + "', '" + user.getAge() + "')";
         stmt.execute(sql);
         sql = "select * from users where name='" + user.getName() + "'";
         ResultSet rts = stmt.executeQuery(sql);
@@ -49,14 +49,15 @@ public class UserDao {
 
     public User editUser(User user) throws ClassNotFoundException, SQLException{
         Statement stmt = conn.createStatement();
-        String sql = "UPDATE users SET name='" + user.getName() + "', gender='" + user.getGenderNum() + "', email='" + user.getEmail() + "', age='" + user.getAge() + "' WHERE id='" + user.getId() + "'";
+        String sql = "UPDATE users SET name='" + user.getName() + "', gender='" + user.getGender() + "', email='" + user.getEmail() + "', age='" + user.getAge() + "' WHERE id='" + user.getId() + "'";
         stmt.execute(sql);
         return user;
     }
 
     public void deleteUser(User user) throws ClassNotFoundException, SQLException {
         Statement stmt = conn.createStatement();
-        String sql = "DELETE FROM users WHERE id='" + user.getId() + "'";
+        String sql = "DELETE FROM users WHERE id='" + user.getId()
+                + "'";
         stmt.execute(sql);
     }
 }

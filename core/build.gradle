@@ -6,6 +6,10 @@ buildscript {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     testCompile 'junit:junit:4.10'
     compile "mysql:mysql-connector-java:5.1.36"
