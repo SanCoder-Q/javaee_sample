@@ -33,6 +33,7 @@ public class DBServlet extends HttpServlet {
                 out.print("},");
             }
             out.print("{}]");
+            out.close();
             rst.close();
             stmt.close();
             con.close();
@@ -61,14 +62,8 @@ public class DBServlet extends HttpServlet {
             if (op.equals("add")) {
                 System.out.println(username);
                 sql = "INSERT INTO users (name, gender, email, age) VALUES ('" + username + "', '" + gender + "', '" + email + "', '" + age + "')";
-            } else if (op == "delete") {
-            } else if (op == "edit") {
-            } else {
-            }
-
-            if(sql.length() > 0) {
                 stmt.execute(sql);
-                
+
                 ResultSet rst = stmt.executeQuery("select * from users where name='" + username + "'");
 
                 rst.last();
@@ -76,18 +71,51 @@ public class DBServlet extends HttpServlet {
                 out.print("{");
                 out.print("\"id\":\"" + rst.getString("id") + "\",");
                 out.print("\"username\":\"" + rst.getString("name") + "\",");
-                if (rst.getInt("gender") == 1)
+                if (rst.getInt("gender") == 1) {
                     out.print("\"gender\":\"男\",");
-                else
+                }
+                else {
                     out.print("\"gender\":\"女\",");
+                }
                 out.print("\"email\":\"" + rst.getString("email") + "\",");
                 out.print("\"age\":\"" + rst.getString("age") + "\"");
                 out.print("}");
                 rst.close();
+
+            } else if (op.equals("delete")) {
+                System.out.println(username);
+                sql = "DELETE FROM users WHERE id='" + id + "'";
+                out.print(stmt.execute(sql));
+
+            } else if (op.equals("edit")) {
+                System.out.println(username);
+                sql = "UPDATE users SET name='" + username + "', gender='" + gender + "', email='" + email + "', age='" + age + "' WHERE id='" + id + "'";
+                stmt.execute(sql);
+                ResultSet rst = stmt.executeQuery("select * from users where id='" + id + "'");
+
+                rst.last();
+
+                out.print("{");
+                out.print("\"id\":\"" + rst.getString("id") + "\",");
+                out.print("\"username\":\"" + rst.getString("name") + "\",");
+                if (rst.getInt("gender") == 1) {
+                    out.print("\"gender\":\"男\",");
+                }
+                else {
+                    out.print("\"gender\":\"女\",");
+                }
+                out.print("\"email\":\"" + rst.getString("email") + "\",");
+                out.print("\"age\":\"" + rst.getString("age") + "\"");
+                out.print("}");
+                rst.close();
+            } else {
+
+
             }
+            out.close();
             stmt.close();
             con.close();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
