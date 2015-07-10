@@ -88,7 +88,7 @@ public class DBServlet extends HttpServlet {
     }
 
     public void init(){
-        daoFactory = new DaoFactory();
+        daoFactory = DaoFactory.getDaoFactory();
     }
 
     private String user2JSON(List<User> userList) {
@@ -98,7 +98,7 @@ public class DBServlet extends HttpServlet {
             json += "{";
             json += "\"id\":\"" + user.getId() + "\",";
             json += "\"username\":\"" + user.getName() + "\",";
-            json += "\"gender\":\"" + user.getGender() + "\",";
+            json += "\"gender\":\"" + user.getGenderStr() + "\",";
             json += "\"email\":\"" + user.getEmail() + "\",";
             json += "\"age\":\"" + user.getAge() + "\"";
             json += "},";
@@ -115,7 +115,7 @@ public class DBServlet extends HttpServlet {
         json += "{";
         json += "\"id\":\"" + user.getId() + "\",";
         json += "\"username\":\"" + user.getName() + "\",";
-        json += "\"gender\":\"" + user.getGender() + "\",";
+        json += "\"gender\":\"" + user.getGenderStr() + "\",";
         json += "\"email\":\"" + user.getEmail() + "\",";
         json += "\"age\":\"" + user.getAge() + "\"";
         json += "}";

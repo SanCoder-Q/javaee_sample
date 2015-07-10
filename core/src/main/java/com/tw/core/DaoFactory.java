@@ -1,5 +1,9 @@
 package com.tw.core;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -7,11 +11,21 @@ import java.sql.SQLException;
  */
 public class DaoFactory {
 
-    public UserDao userDao() throws SQLException, ClassNotFoundException{
-        return new UserDao(getConnectionMaker());
+    private static DaoFactory factory;
+    private static SessionFactory sf;
+
+    public static DaoFactory getDaoFactory() {
+        if (factory == null)
+            factory = new DaoFactory();
+        return factory;
     }
 
-    public IConnectionMaker getConnectionMaker(){
-        return new MySQLConnectionMaker();
+    private DaoFactory() {
+        if (sf == null)
+            sf = new Configuration().configure().buildSessionFactory();
+    }
+
+    public static UserDao userDao() throws SQLException, ClassNotFoundException {
+        return new UserDao(sf);
     }
 }
