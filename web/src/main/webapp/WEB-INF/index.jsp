@@ -37,25 +37,31 @@
             //添加处理
             var done_btn = $("<button class='edit_user_done_btn' type='button'>确定</button>");
             done_btn.click(function () {
-                var data = {
-                    "operation": "edit",
+                var user = {
                     "id": user_info.id,
-                    "username": user_row.find("input")[0].value,
-                    "gender": user_row.find("input")[1].value,
+                    "name": user_row.find("input")[0].value,
+                    "gender": user_row.find("input")[1].value == "男" ? 1 : 0,
                     "email": user_row.find("input")[2].value,
-                    "age": user_row.find("input")[3].value
+                    "age": parseInt(user_row.find("input")[3].value)
                 };
                 //发送请求
-                $.post("/web/user", data, function (resp) {
-                    console.log(resp);
-                    var user = resp;
-                    user_row.find("td:lt(4)").empty();
-                    user_row.find(".col_operation").children().show();
-                    done_btn.remove();
-                    user_row.find(".col_username").text(user.username);
-                    user_row.find(".col_gender").text(user.gender);
-                    user_row.find(".col_email").text(user.email);
-                    user_row.find(".col_age").text(user.age);
+                $.ajax({
+                    url: "/web/users/edit",
+                    dataType: "json",
+                    contentType: "application/json",
+                    type: "POST",
+                    data: JSON.stringify(user),
+                    success: function (resp) {
+                        console.log(resp);
+                        var user = resp;
+                        user_row.find("td:lt(4)").empty();
+                        user_row.find(".col_operation").children().show();
+                        done_btn.remove();
+                        user_row.find(".col_username").text(user.name);
+                        user_row.find(".col_gender").text(user.gender == 1 ? "男" : "女");
+                        user_row.find(".col_email").text(user.email);
+                        user_row.find(".col_age").text(user.age);
+                    }
                 });
             });
             user_row.find(".col_operation").append(done_btn);
@@ -66,27 +72,28 @@
             var user_row = $(this).closest("tr");
             var user_id = user_row.attr("id").substr("user_row_".length);
             //获取信息
-            var user_info = {
+            var user = {
                 "id": user_id,
-                "username": user_row.find(".col_username").text(),
-                "gender": user_row.find(".col_gender").text(),
+                "name": user_row.find(".col_username").text(),
+                "gender": user_row.find(".col_gender").text() == "男" ? 1 : 0,
                 "email": user_row.find(".col_email").text(),
-                "age": user_row.find(".col_age").text()
+                "age": parseInt(user_row.find(".col_age").text())
             };
-            var data = {
-                "operation": "delete",
-                "id": user_info.id,
-                "username": user_info.username,
-                "gender": user_info.gender,
-                "email": user_info.email,
-                "age": user_info.age
-            };
-            console.log(JSON.stringify(data));
+            console.log(JSON.stringify(user));
             //发送请求
-            $.post("/web/user", data, function (resp) {
-                console.log(resp);
-                user_row.empty();
-                user_row.remove();
+            $.ajax({
+                url: "/web/users/delete",
+                contentType: "application/json",
+                type: "POST",
+                data: JSON.stringify(user),
+                success: function (resp) {
+                    console.log(resp);
+                    user_row.empty();
+                    user_row.remove();
+                },
+                error: function (e) {
+                    console.log(e);
+                }
             });
         });
 
@@ -110,28 +117,37 @@
 
         $("#confirm-add-btn").click(function () {
 
-            var data = {
-                "operation": "add",
-                "username": $("#input-tr-add").find("input")[0].value,
-                "gender": $("#input-tr-add").find("input")[1].value,
+            var user = {
+                "id": -1,
+                "name": $("#input-tr-add").find("input")[0].value,
+                "gender": $("#input-tr-add").find("input")[1].value == "男" ? 1 : 0,
                 "email": $("#input-tr-add").find("input")[2].value,
-                "age": $("#input-tr-add").find("input")[3].value
+                "age": parseInt($("#input-tr-add").find("input")[3].value)
             };
 
-            console.log(JSON.stringify(data));
-            $.post("/web/user", data, function (resp) {
-                console.log(resp);
-                var user = resp;
-                $("#user-table").append("<tr id='user_row_" + user.id + "'>" +
-                "<td class='col_username'>" + user.username + "</td>" +
-                "<td class='col_gender'>" + user.gender + "</td>" +
-                "<td class='col_email'>" + user.email + "</td>" +
-                "<td class='col_age'>" + user.age + "</td>" +
-                "<td class='col_operation'><button class='edit_user_btn' type='button'>编辑</button><button class='delete_user_btn' type='button'>删除</button></td>" +
-                "</tr>");
-                update_operation();
-            });
+            console.log(JSON.stringify(user));
 
+            $.ajax({
+                url: "/web/users/add",
+                dataType: "json",
+                contentType: "application/json",
+                type: "POST",
+                data: JSON.stringify(user),
+                success: function (resp) {
+                    console.log(resp);
+                    var user = resp;
+                    $("#user-table").append("<tr id='user_row_" + user.id + "'>" +
+                    "<td class='col_username'>" + user.name + "</td>" +
+                    "<td class='col_gender'>" + (user.gender == 1 ? "男" : "女") + "</td>" +
+                    "<td class='col_email'>" + user.email + "</td>" +
+                    "<td class='col_age'>" + user.age + "</td>" +
+                    "<td class='col_operation'><button class='edit_user_btn' type='button'>编辑</button><button class='delete_user_btn' type='button'>删除</button></td>" +
+                    "</tr>");
+                    update_operation();
+                },
+                error: function () {
+                }
+            });
 
             $("#add-user-btn").show();
             $("#confirm-add-btn").hide();
@@ -140,7 +156,7 @@
 
         $.get("/web/user", function (data, status) {
             var users = data;
-            for (var i = 0; i < users.length - 1; i++) {
+            for (var i = 0; i < users.length; i++) {
                 $("#user-table").append("<tr id='user_row_" + users[i].id + "'>" +
                 "<td class='col_username'>" + users[i].username + "</td>" +
                 "<td class='col_gender'>" + users[i].gender + "</td>" +
