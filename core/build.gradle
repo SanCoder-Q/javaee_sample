@@ -13,5 +13,6 @@ repositories {
 dependencies {
     testCompile 'junit:junit:4.10'
     compile "mysql:mysql-connector-java:5.1.36"
+    compile 'org.hibernate:hibernate-entitymanager:5.0.0.CR1'
 }
 

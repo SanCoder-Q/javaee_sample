@@ -1,9 +1,14 @@
 apply plugin: 'jetty'
 apply plugin: 'flyway'
+apply plugin: 'com.bmuschko.tomcat'
 
 dependencies {
     compile project(':core')
     providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    def tomcatVersion = '6.0.43'
+    tomcat "org.apache.tomcat:catalina:${tomcatVersion}",
+            "org.apache.tomcat:coyote:${tomcatVersion}",
+            "org.apache.tomcat:jasper:${tomcatVersion}"
 
     testCompile 'junit:junit:4.10'
 }
@@ -11,12 +16,14 @@ dependencies {
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
 
     dependencies {
         classpath "com.googlecode.flyway:flyway-gradle-plugin:2.3.1"
         classpath "mysql:mysql-connector-java:5.1.36"
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.2'
     }
 }
 
@@ -30,6 +37,7 @@ flyway {
     password = ''
     driver = 'com.mysql.jdbc.Driver'
     url = 'jdbc:mysql://127.0.0.1:3306/test?characterEncoding=utf8'
-//  baseDir = 'db/migration'
+//    baseDir = 'db/migration'
+//    baselineOnMigrate = "true"
 }
 

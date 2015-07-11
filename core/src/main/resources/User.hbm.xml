@@ -5,13 +5,13 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="User" table="USERS">
-        <id name="id" column="ID">
-            <generator class="increment" />
+    <class name="com.tw.core.User" table="USERS">
+        <id name="id" column="id">
+            <generator class="native" />
         </id>
-        <property name="name" column="USERNAME" />
-        <property name="gender" column="GENDER" />
-        <property name="email" column="EMAIL" />
-        <property name="age" column="AGE" />
+        <property name="name" column="name" />
+        <property name="gender" column="gender" />
+        <property name="email" column="email" />
+        <property name="age" column="age" />
     </class>
 </hibernate-mapping>

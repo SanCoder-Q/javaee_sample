@@ -4,13 +4,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +36,7 @@ public class UserDao {
 
     public List<User> getAllUsers() throws ClassNotFoundException, SQLException {
         Session session = sf.openSession();
-        Query query = session.createQuery("from User");
+        Query query = session.createQuery("FROM com.tw.core.User");
         return query.list();
     }
 

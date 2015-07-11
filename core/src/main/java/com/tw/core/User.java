@@ -1,9 +1,16 @@
 package com.tw.core;
 
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.io.Serializable;
+
 /**
  * Created by SanCoder on 7/9/15.
  */
-public class User{
+
+
+public class User implements Serializable {
     private int id;
     private String name;
     private int gender;
@@ -75,7 +82,6 @@ public class User{
     }
 
     public User(String name, int gender, String email, int age) {
-        this.id = id;
         this.name = name;
         this.gender = gender;
         this.email = email;

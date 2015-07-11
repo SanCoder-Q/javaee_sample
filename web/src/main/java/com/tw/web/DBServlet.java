@@ -1,7 +1,6 @@
 package com.tw.web;
 
 import java.io.*;
-import java.sql.*;
 import java.util.List;
 import javax.servlet.*;
 import javax.servlet.http.*;

@@ -10,7 +10,7 @@
         <property name="connection.url">jdbc:mysql://127.0.0.1:3306/test?characterEncoding=utf8</property>
         <property name="connection.username">root</property>
         <property name="connection.password"/>
-        <property name="connection.pool_size">1</property>
+        <property name="connection.pool_size">10</property>
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         <!-- Enable Hibernate's automatic session context management -->
         <!--<property name="current_session_context_class">thread</property>-->
