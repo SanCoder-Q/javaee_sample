@@ -154,12 +154,12 @@
             $("#input-tr-add").remove();
         });
 
-        $.get("/web/user", function (data, status) {
+        $.get("/web/users", function (data, status) {
             var users = data;
             for (var i = 0; i < users.length; i++) {
                 $("#user-table").append("<tr id='user_row_" + users[i].id + "'>" +
-                "<td class='col_username'>" + users[i].username + "</td>" +
-                "<td class='col_gender'>" + users[i].gender + "</td>" +
+                "<td class='col_username'>" + users[i].name + "</td>" +
+                "<td class='col_gender'>" + (users[i].gender == 1 ? "男" : "女") + "</td>" +
                 "<td class='col_email'>" + users[i].email + "</td>" +
                 "<td class='col_age'>" + users[i].age + "</td>" +
                 "<td class='col_operation'><button class='edit_user_btn' type='button'>编辑</button><button class='delete_user_btn' type='button'>删除</button></td>" +

@@ -5,26 +5,6 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
     http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <servlet>
-        <servlet-name>HelloServlet</servlet-name>
-        <servlet-class>com.tw.web.HelloServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>HelloServlet</servlet-name>
-        <url-pattern>/hello</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>DBServlet</servlet-name>
-        <servlet-class>com.tw.web.DBServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>DBServlet</servlet-name>
-        <url-pattern>/user</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
         <servlet-name>SpringDispatcherServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
