@@ -50,6 +50,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 //        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 //    }
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/js/**").addResourceLocations("/lib/js/");
+        registry.addResourceHandler("/css/**").addResourceLocations("/lib/css/");
+        super.addResourceHandlers(registry);
+    }
+
     @Bean
     @Autowired
     public ContentNegotiatingViewResolver contentNegotiatingViewResolver(MappingJackson2JsonView mappingJackson2JsonView) {
@@ -80,13 +87,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public MappingJackson2JsonView mappingJacksonJsonView() {
         return new MappingJackson2JsonView();
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/js/**").addResourceLocations("/lib/js/");
-        registry.addResourceHandler("/css/**").addResourceLocations("/lib/css/");
-        super.addResourceHandlers(registry);
     }
 
     @Override
