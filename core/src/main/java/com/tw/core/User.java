@@ -1,20 +1,34 @@
 package com.tw.core;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.annotation.Generated;
+import javax.persistence.*;
+import javax.persistence.metamodel.CollectionAttribute;
 import java.io.Serializable;
 
 /**
  * Created by SanCoder on 7/9/15.
  */
 
-
+@Entity
+@Table(name="users")
 public class User implements Serializable {
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue
     private int id;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "gender")
     private int gender;
+
+    @Column(name = "email")
     private String email;
+
+    @Column
     private int age;
 
     public int getId() {
