@@ -1,8 +1,7 @@
-package com.tw.web.controller;
+package com.tw.core.controller;
 
-import com.tw.core.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import com.tw.core.model.User;
+import com.tw.core.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -21,31 +20,22 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Repository
 @Controller
-public class SuperUserController {
+public class UserController {
 
     @Autowired
-    // SessionFactory injection
-    private SessionFactory sessionFactory;
-
-    // Gets current Session object
-    public Session getSession(){
-        return sessionFactory.getCurrentSession();
-    }
+    private IUserService userService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String loadHomePage(Model m) {
         return "index";
     }
 
-
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     @Transactional(readOnly = true)
     @ResponseStatus( HttpStatus.OK )
     @ResponseBody
     public List<User> loadUsersPage() {
-
-        List<User> userList = (List<User>)getSession().createQuery("FROM com.tw.core.User").list();
-        return userList;
+        return userService.getAllUser();
     }
 
     @RequestMapping(value = "/users/add", method = RequestMethod.POST)
@@ -53,24 +43,20 @@ public class SuperUserController {
     @ResponseStatus( HttpStatus.OK )
     @ResponseBody
     public User addUsers(@RequestBody User user) {
-
-        getSession().save(user);
-        return user;
+        return userService.addUser(user);
     }
 
     @RequestMapping(value = "/users/edit", method = RequestMethod.POST)
     @Transactional(readOnly = false)
     @ResponseBody
     public User editUsers(@RequestBody User user) {
-        getSession().update(user);
-        return user;
+        return userService.editUser(user);
     }
 
     @RequestMapping(value = "/users/delete", method = RequestMethod.POST)
     @Transactional(readOnly = false)
     @ResponseBody
     public String deleteUsers(@RequestBody User user) {
-        getSession().delete(getSession().get(User.class, user.getId()));
-        return "Delete success.";
+        return userService.deleteUser(user) ? "Delete success" : "Delete error";
     }
 }

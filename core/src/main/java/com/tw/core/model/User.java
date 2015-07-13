@@ -1,9 +1,7 @@
-package com.tw.core;
+package com.tw.core.model;
 
 
-import javax.annotation.Generated;
 import javax.persistence.*;
-import javax.persistence.metamodel.CollectionAttribute;
 import java.io.Serializable;
 
 /**

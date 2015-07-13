@@ -1,6 +1,6 @@
 package com.tw.web.springConfig;
 
-import com.tw.core.User;
+import com.tw.core.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -28,7 +28,7 @@ import java.util.Properties;
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement // As <tx:annotation-config />
-@ComponentScan(basePackages = "com.tw.web.controller")
+@ComponentScan(basePackages = "com.tw.core")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
 //    @Bean
